@@ -38,13 +38,6 @@ SETTINGS:
     # to make sure that all accounts will be started at different times
     RANDOM_INITIALIZATION_PAUSE: [5, 60]
     
-    # if true, bot will send logs to telegram
-    SEND_TELEGRAM_LOGS: false
-    # telegram bot token
-    TELEGRAM_BOT_TOKEN: "12317283:lskjalsdfasdfasd-sdfadfasd"
-    # telegram users ids
-    TELEGRAM_USERS_IDS: [235123432]
-
     # wait for transaction confirmation in seconds
     WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS: 120
 

@@ -86,7 +86,6 @@ class MintsConfig:
 @dataclass
 class WalletInfo:
     account_index: int
-    private_key: str
     address: str
     balance: float
     transactions: int
@@ -157,6 +156,7 @@ class Config:
                 WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS=data["SETTINGS"].get(
                     "WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS", 120
                 ),
+                SHUFFLE_WALLETS=data["SETTINGS"].get("SHUFFLE_WALLETS", True),
             ),
             FLOW=FlowConfig(
                 TASKS=tasks_list,

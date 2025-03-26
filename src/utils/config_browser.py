@@ -64,27 +64,23 @@ def load_config():
                     config[section] = {}
 
             # Ensure SETTINGS has all required fields with default values
-            if "SETTINGS" in config:
-                defaults = {
-                    "THREADS": 1,
-                    "ATTEMPTS": 5,
-                    "ACCOUNTS_RANGE": [0, 0],
-                    "EXACT_ACCOUNTS_TO_USE": [],
-                    "SHUFFLE_WALLETS": False,
-                    "PAUSE_BETWEEN_ATTEMPTS": [0, 0],
-                    "PAUSE_BETWEEN_SWAPS": [0, 0],
-                    "RANDOM_PAUSE_BETWEEN_ACCOUNTS": [0, 0],
-                    "RANDOM_PAUSE_BETWEEN_ACTIONS": [0, 0],
-                    "RANDOM_INITIALIZATION_PAUSE": [0, 0],
-                    "SEND_TELEGRAM_LOGS": False,
-                    "TELEGRAM_BOT_TOKEN": "",
-                    "TELEGRAM_USERS_IDS": [],
-                    "WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS": 120,
-                }
+            settings_defaults = {
+                "THREADS": 1,
+                "ATTEMPTS": 5,
+                "ACCOUNTS_RANGE": [0, 0],
+                "EXACT_ACCOUNTS_TO_USE": [],
+                "SHUFFLE_WALLETS": True,
+                "PAUSE_BETWEEN_ATTEMPTS": [3, 10],
+                "PAUSE_BETWEEN_SWAPS": [5, 30],
+                "RANDOM_PAUSE_BETWEEN_ACCOUNTS": [5, 30],
+                "RANDOM_PAUSE_BETWEEN_ACTIONS": [5, 30],
+                "RANDOM_INITIALIZATION_PAUSE": [5, 60],
+                "WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS": 120
+            }
 
-                for key, default_value in defaults.items():
-                    if key not in config["SETTINGS"]:
-                        config["SETTINGS"][key] = default_value
+            for key, default_value in settings_defaults.items():
+                if key not in config["SETTINGS"]:
+                    config["SETTINGS"][key] = default_value
 
             # Ensure FLOW has all required fields
             if "FLOW" in config:
@@ -1397,13 +1393,6 @@ function renderConfig(config) {
                     { key: 'RANDOM_PAUSE_BETWEEN_ACCOUNTS', value: config[key]['RANDOM_PAUSE_BETWEEN_ACCOUNTS'] },
                     { key: 'RANDOM_PAUSE_BETWEEN_ACTIONS', value: config[key]['RANDOM_PAUSE_BETWEEN_ACTIONS'] },
                     { key: 'RANDOM_INITIALIZATION_PAUSE', value: config[key]['RANDOM_INITIALIZATION_PAUSE'] }
-                ], key);
-                
-                // Карточка для Telegram
-                createCard(cardsContainer, 'Telegram Settings', 'paper-plane', [
-                    { key: 'SEND_TELEGRAM_LOGS', value: config[key]['SEND_TELEGRAM_LOGS'] },
-                    { key: 'TELEGRAM_BOT_TOKEN', value: config[key]['TELEGRAM_BOT_TOKEN'] },
-                    { key: 'TELEGRAM_USERS_IDS', value: config[key]['TELEGRAM_USERS_IDS'], isSpaceList: true }
                 ], key);
             } else if (key === 'FLOW') {
                 createCard(cardsContainer, 'Flow Settings', 'exchange-alt', [

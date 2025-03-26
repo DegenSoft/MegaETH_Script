@@ -6,17 +6,12 @@ import platform
 import logging
 
 from process import start
-from src.utils.output import show_logo, show_dev_info
-from src.utils.check_github_version import check_version
 
 if platform.system() == "Windows":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 async def main():
-    show_logo()
-    show_dev_info()
-    
     configuration()
     await start()
 

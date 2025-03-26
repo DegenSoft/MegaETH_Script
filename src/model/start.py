@@ -1,5 +1,6 @@
 from eth_account import Account
 from loguru import logger
+from degensoft.decryption import decrypt_private_key
 import primp
 import random
 import asyncio
@@ -17,7 +18,6 @@ from src.model.onchain.web3_custom import Web3Custom
 from src.utils.client import create_client
 from src.utils.config import Config
 from src.model.database.db_manager import Database
-from src.utils.telegram_logger import send_telegram_message
 
 
 class Start:
@@ -27,11 +27,14 @@ class Start:
         proxy: str,
         private_key: str,
         config: Config,
+        password: str
     ):
         self.account_index = account_index
         self.proxy = proxy
         self.private_key = private_key
         self.config = config
+        self.private_key_enc = private_key
+        self.private_key = decrypt_private_key(private_key, password) if password else private_key
 
         self.session: primp.AsyncClient | None = None
         self.megaeth_web3: Web3Custom | None = None
@@ -62,14 +65,14 @@ class Start:
             try:
                 wallet_stats = WalletStats(self.config, self.megaeth_web3)
                 await wallet_stats.get_wallet_stats(
-                    self.private_key, self.account_index
+                    self.private_key_enc, self.account_index
                 )
             except Exception as e:
                 pass
 
             db = Database()
             try:
-                tasks = await db.get_wallet_pending_tasks(self.private_key)
+                tasks = await db.get_wallet_pending_tasks(self.private_key_enc)
             except Exception as e:
                 if "no such table: wallets" in str(e):
                     logger.error(
@@ -82,7 +85,6 @@ class Start:
                             f"Wallet: <code>{self.private_key[:6]}...{self.private_key[-4:]}</code>\n"
                             f"Error: Database not created or wallets table not found"
                         )
-                        await send_telegram_message(self.config, error_message)
                     return False
                 else:
                     logger.error(
@@ -120,7 +122,7 @@ class Start:
 
                 if success:
                     await db.update_task_status(
-                        self.private_key, task_name, "completed"
+                        self.private_key_enc, task_name, "completed"
                     )
                     completed_tasks.append(task_name)
                     await self.sleep(task_name)
@@ -141,7 +143,7 @@ class Start:
             if self.config.SETTINGS.SEND_TELEGRAM_LOGS:
                 message = (
                     f"🐰 MegaETH StarLabs Bot Report\n\n"
-                    f"💳 Wallet: {self.account_index} | <code>{self.private_key[:6]}...{self.private_key[-4:]}</code>\n\n"
+                    f"💳 Wallet: {self.account_index} | <code>{self.private_key_enc[:6]}...{self.private_key_enc    [-4:]}</code>\n\n"
                 )
 
                 if completed_tasks:
@@ -168,7 +170,6 @@ class Start:
                     f"Skip Failed: {'Yes' if self.config.FLOW.SKIP_FAILED_TASKS else 'No'}\n"
                 )
 
-                await send_telegram_message(self.config, message)
 
             return len(failed_tasks) == 0
 
@@ -179,10 +180,9 @@ class Start:
                 error_message = (
                     f"⚠️ Error Report\n\n"
                     f"Account #{self.account_index}\n"
-                    f"Wallet: <code>{self.private_key[:6]}...{self.private_key[-4:]}</code>\n"
+                    f"Wallet: <code>{self.private_key_enc[:6]}...{self.private_key_enc[-4:]}</code>\n"
                     f"Error: {str(e)}"
                 )
-                await send_telegram_message(self.config, error_message)
 
             return False
         finally:
