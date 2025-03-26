@@ -1,10 +1,6 @@
-# StarLabs-MegaETH Bot 🚀
+# MegaETH Bot 🚀
 
 A powerful and flexible Ethereum Layer 2 automation tool with multiple features for MegaETH testnet activities.
-
-TUTORIAL >>> star-labs.gitbook.io/star-labs/software/megaeth/ru <<<
-TUTORIAL >>> star-labs.gitbook.io/star-labs/software/megaeth/ru <<<
-TUTORIAL >>> star-labs.gitbook.io/star-labs/software/megaeth/ru <<<
 
 ## 🌟 Features
 - ✨ Multi-threaded processing
@@ -40,8 +36,8 @@ TUTORIAL >>> star-labs.gitbook.io/star-labs/software/megaeth/ru <<<
 ## 🚀 Installation
 1. Clone the repository:
 ```
-git clone https://github.com/0xStarLabs/StarLabs-MegaETH.git
-cd StarLabs-MegaETH
+git clone https://github.com/DegenSoft/MegaETH_Script.git
+cd MegaETH_Script
 ```
 
 2. Install dependencies:
@@ -55,7 +51,7 @@ pip install -r requirements.txt
 
 ## 📁 Project Structure
 ```
-StarLabs-MegaETH/
+MegaETH_Script/
 ├── data/
 │   ├── private_keys.txt    # Ethereum wallet private keys
 │   └── proxies.txt         # Proxy addresses (optional)
