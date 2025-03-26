@@ -72,9 +72,9 @@ def print_wallets_stats(config: Config, excel_path="data/progress.xlsx"):
                 f"{'='*50}"
             )
 
-            logger.info(f"Average balance: {avg_balance:.4f} ETH")
+            logger.info(f"Average balance: {avg_balance:.8f} ETH")
             logger.info(f"Average transactions: {avg_transactions:.1f}")
-            logger.info(f"Total balance: {total_balance:.4f} ETH")
+            logger.info(f"Total balance: {total_balance:.8f} ETH")
             logger.info(f"Total transactions: {total_transactions:,}")
 
             # Экспорт в Excel
@@ -89,14 +89,14 @@ def print_wallets_stats(config: Config, excel_path="data/progress.xlsx"):
                     "Total",
                     f"{wallets_count} wallets",
                     "",
-                    f"{total_balance:.4f} ETH",
+                    f"{total_balance:.8f} ETH",
                     f"{total_transactions:,}",
                 ],
                 [
                     "Average",
                     "",
                     "",
-                    f"{avg_balance:.4f} ETH",
+                    f"{avg_balance:.8f} ETH",
                     f"{avg_transactions:.1f}",
                 ],
             ]

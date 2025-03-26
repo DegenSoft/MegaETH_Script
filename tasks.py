@@ -8,7 +8,6 @@ GTE_SWAPS = ["gte_swaps"]
 TEKO_FINANCE = ["teko_faucet", "teko_finance"]
 ONCHAIN_GM = ["onchain_gm"]
 XL_MEME = ["xl_meme"]
-GTE_FAUCET = ["gte_faucet"]
 
 """
 EN:
@@ -64,6 +63,5 @@ gte_swaps - trade tokens at https://testnet.gte.xyz/
 teko_finance - stake tkUSDC at https://app.teko.finance/
 onchain_gm - mint GM at https://onchaingm.com/
 xl_meme - buy memetokens at https://testnet.xlmeme.com/megaeth
-gte_faucet - faucet mega eth tokens at https://testnet.gte.xyz/faucet
 
 """

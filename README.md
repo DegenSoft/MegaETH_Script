@@ -2,6 +2,10 @@
 
 A powerful and flexible Ethereum Layer 2 automation tool with multiple features for MegaETH testnet activities.
 
+TUTORIAL >>> star-labs.gitbook.io/star-labs/software/megaeth/ru <<<
+TUTORIAL >>> star-labs.gitbook.io/star-labs/software/megaeth/ru <<<
+TUTORIAL >>> star-labs.gitbook.io/star-labs/software/megaeth/ru <<<
+
 ## 🌟 Features
 - ✨ Multi-threaded processing
 - 🔄 Automatic retries with configurable attempts
