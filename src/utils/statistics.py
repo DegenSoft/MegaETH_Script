@@ -83,18 +83,16 @@ def print_wallets_stats(config: Config, excel_path="data/progress.xlsx"):
 
             # Добавляем итоговую статистику
             summary_data = [
-                ["", "", "", "", ""],
-                ["SUMMARY", "", "", "", ""],
+                ["", "", "", ""],
+                ["SUMMARY", "", "", ""],
                 [
                     "Total",
                     f"{wallets_count} wallets",
-                    "",
                     f"{total_balance:.8f} ETH",
                     f"{total_transactions:,}",
                 ],
                 [
                     "Average",
-                    "",
                     "",
                     f"{avg_balance:.8f} ETH",
                     f"{avg_transactions:.1f}",

@@ -65,7 +65,7 @@ class Start:
             try:
                 wallet_stats = WalletStats(self.config, self.megaeth_web3)
                 await wallet_stats.get_wallet_stats(
-                    self.private_key_enc, self.account_index
+                    self.private_key, self.account_index
                 )
             except Exception as e:
                 pass
