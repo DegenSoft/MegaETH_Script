@@ -1,10 +1,10 @@
 from eth_account import Account
 from loguru import logger
-from degensoft.decryption import decrypt_private_key
+
 import primp
 import random
 import asyncio
-
+from src.degensoft.decryption import decrypt_private_key
 from src.model.projects.mints.xl_meme.instance import XLMeme
 from src.model.projects.other.onchaingm.instance import OnchainGm
 from src.model.projects.stakings.teko_finance import TekoFinance
@@ -78,13 +78,6 @@ class Start:
                     logger.error(
                         f"{self.account_index} | Database not created or wallets table not found"
                     )
-                    if self.config.SETTINGS.SEND_TELEGRAM_LOGS:
-                        error_message = (
-                            f"⚠️ Database error\n\n"
-                            f"Account #{self.account_index}\n"
-                            f"Wallet: <code>{self.private_key[:6]}...{self.private_key[-4:]}</code>\n"
-                            f"Error: Database not created or wallets table not found"
-                        )
                     return False
                 else:
                     logger.error(
@@ -139,50 +132,11 @@ class Start:
                         )
                         await self.sleep(task_name)
 
-            # Отправляем сообщение в Telegram только в конце всей работы
-            if self.config.SETTINGS.SEND_TELEGRAM_LOGS:
-                message = (
-                    f"🐰 MegaETH Bot Report\n\n"
-                    f"💳 Wallet: {self.account_index} | <code>{self.private_key_enc[:6]}...{self.private_key_enc[-4:]}</code>\n\n"
-                )
-
-                if completed_tasks:
-                    message += f"✅ Completed Tasks:\n"
-                    for i, task in enumerate(completed_tasks, 1):
-                        message += f"{i}. {task}\n"
-                    message += "\n"
-
-                if failed_tasks:
-                    message += f"❌ Failed Tasks:\n"
-                    for i, task in enumerate(failed_tasks, 1):
-                        message += f"{i}. {task}\n"
-                    message += "\n"
-
-                total_tasks = len(tasks)
-                completed_count = len(completed_tasks)
-                message += (
-                    f"📊 Statistics:\n"
-                    f"Total Tasks: {total_tasks}\n"
-                    f"Completed: {completed_count}\n"
-                    f"Failed: {len(failed_tasks)}\n"
-                    f"Success Rate: {(completed_count/total_tasks)*100:.1f}%\n\n"
-                    f"⚙️ Settings:\n"
-                    f"Skip Failed: {'Yes' if self.config.FLOW.SKIP_FAILED_TASKS else 'No'}\n"
-                )
-
 
             return len(failed_tasks) == 0
 
         except Exception as e:
             logger.error(f"{self.account_index} | Error: {e}")
-
-            if self.config.SETTINGS.SEND_TELEGRAM_LOGS:
-                error_message = (
-                    f"⚠️ Error Report\n\n"
-                    f"Account #{self.account_index}\n"
-                    f"Wallet: <code>{self.private_key_enc[:6]}...{self.private_key_enc[-4:]}</code>\n"
-                    f"Error: {str(e)}"
-                )
 
             return False
         finally:

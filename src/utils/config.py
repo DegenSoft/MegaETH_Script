@@ -16,9 +16,6 @@ class SettingsConfig:
     RANDOM_PAUSE_BETWEEN_ACCOUNTS: Tuple[int, int]
     RANDOM_PAUSE_BETWEEN_ACTIONS: Tuple[int, int]
     RANDOM_INITIALIZATION_PAUSE: Tuple[int, int]
-    TELEGRAM_USERS_IDS: List[int]
-    TELEGRAM_BOT_TOKEN: str
-    SEND_TELEGRAM_LOGS: bool
     SHUFFLE_WALLETS: bool
     WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS: int
 
@@ -149,14 +146,10 @@ class Config:
                 RANDOM_INITIALIZATION_PAUSE=tuple(
                     data["SETTINGS"]["RANDOM_INITIALIZATION_PAUSE"]
                 ),
-                TELEGRAM_USERS_IDS=data["SETTINGS"]["TELEGRAM_USERS_IDS"],
-                TELEGRAM_BOT_TOKEN=data["SETTINGS"]["TELEGRAM_BOT_TOKEN"],
-                SEND_TELEGRAM_LOGS=data["SETTINGS"]["SEND_TELEGRAM_LOGS"],
                 SHUFFLE_WALLETS=data["SETTINGS"].get("SHUFFLE_WALLETS", True),
                 WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS=data["SETTINGS"].get(
                     "WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS", 120
                 ),
-                SHUFFLE_WALLETS=data["SETTINGS"].get("SHUFFLE_WALLETS", True),
             ),
             FLOW=FlowConfig(
                 TASKS=tasks_list,

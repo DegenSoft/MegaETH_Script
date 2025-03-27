@@ -8,7 +8,6 @@ A powerful and flexible Ethereum Layer 2 automation tool with multiple features 
 - 🔐 Proxy support
 - 📊 Account range selection
 - 🎲 Random pauses between operations
-- 🔔 Telegram logging integration
 - 📝 Detailed transaction tracking
 - 🧩 Modular task system
 
@@ -31,7 +30,6 @@ A powerful and flexible Ethereum Layer 2 automation tool with multiple features 
 - Private keys for Ethereum wallets
 - (Optional) Proxies for enhanced security
 - Solvium API key for captcha solving
-- (Optional) Telegram bot token for logging
 
 ## 🚀 Installation
 1. Clone the repository:

@@ -9,3 +9,4 @@ app.log
 /data/profiles
 src/version.txt
 data/proxies.txt
+*.db
