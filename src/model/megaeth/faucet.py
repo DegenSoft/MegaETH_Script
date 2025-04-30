@@ -28,20 +28,34 @@ async def faucet(
             f"[{account_index}] | Starting faucet for account {wallet.address}..."
         )
 
-        logger.info(
-            f"[{account_index}] | Solving Cloudflare challenge with Solvium..."
-        )
-        solvium = Solvium(
-            api_key=config.FAUCET.SOLVIUM_API_KEY,
-            session=session,
-            proxy=proxy,
-        )
-
-        result = await solvium.solve_captcha(
-            sitekey="0x4AAAAAABA4JXCaw9E2Py-9",
-            pageurl="https://testnet.megaeth.com/",
-        )
-        cf_result = result
+        if config.FAUCET.USE_CAPSOLVER:
+            logger.info(
+                f"[{account_index}] | Solving Cloudflare challenge with Capsolver..."
+            )
+            capsolver = Capsolver(
+                api_key=config.FAUCET.CAPSOLVER_API_KEY,
+                proxy=proxy,
+                session=session,
+            )
+            cf_result = await capsolver.solve_turnstile(
+                "0x4AAAAAABA4JXCaw9E2Py-9",
+                "https://testnet.megaeth.com/",
+            )
+        else:
+            logger.info(
+                f"[{account_index}] | Solving Cloudflare challenge with Solvium..."
+            )
+            solvium = Solvium(
+                api_key=config.FAUCET.SOLVIUM_API_KEY,
+                session=session,
+                proxy=proxy,
+            )
+            
+            result = await solvium.solve_captcha(
+                sitekey="0x4AAAAAABA4JXCaw9E2Py-9",
+                pageurl="https://testnet.megaeth.com/",
+            )
+            cf_result = result
 
         if not cf_result:
             raise Exception("Failed to solve Cloudflare challenge")

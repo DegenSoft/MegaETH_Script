@@ -24,7 +24,7 @@ async def start():
             )
 
     print("\nAvailable options:\n")
-    print("[1] ⭐️Start farming")
+    print("[1] ⭐️ Start farming")
     print("[2] 🔧 Edit config")
     print("[3] 💾 Database actions")
     print("[4] 👋 Exit")

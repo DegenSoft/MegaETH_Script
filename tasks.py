@@ -1,14 +1,30 @@
-TASKS = ["FAUCET"]
+TASKS = ["CRUSTY_SWAP"]
 
+FAUCET = ["faucet", "teko_faucet"]
 
-FAUCET = ["faucet"]
+CRUSTY_SWAP = [
+    # "cex_withdrawal",
+    "crusty_refuel",
+    # "crusty_refuel_from_one_to_all",
+]
+
 CAP_APP = ["cap_app"]
 BEBOP = ["bebop"]
 GTE_SWAPS = ["gte_swaps"]
 TEKO_FINANCE = ["teko_faucet", "teko_finance"]
 ONCHAIN_GM = ["onchain_gm"]
 XL_MEME = ["xl_meme"]
-
+OMNIHUB = ["omnihub"]
+MINTAIR = ["mintair"]
+EASYNODE = ["easynode"]
+HOPNETWORK = ["hopnetwork"]
+OWLTO = ["owlto"]
+RAINMAKR = ["rainmakr"]
+RARIBLE = ["rarible"]
+RARIBLE_NACCI = ["rarible_nacci"]
+SUPERBOARD = ["superboard"]
+CONFT_APP = ["conft_app"]
+ZKCODEX = ["zkcodex"]
 """
 EN:
 You can create your own task with the modules you need 
@@ -56,6 +72,9 @@ BELOW ARE THE READY-MADE TASKS THAT YOU CAN USE:
 以下是您可以使用的现成任务：
 
 
+crusty_refuel - refuel MEGAETH at https://www.crustyswap.com/
+crusty_refuel_from_one_to_all - refuel MEGAETH from one to all wallets at https://www.crustyswap.com/
+cex_withdrawal - withdraw ETH from cex exchange (okx, bitget)
 faucet - faucet mega eth tokens (needs captcha)
 cap_app - mint cUSD at https://cap.app/testnet
 bebop - trade tokens at https://bebop.xyz/trade?network=megaeth&sell=ETH
@@ -63,5 +82,15 @@ gte_swaps - trade tokens at https://testnet.gte.xyz/
 teko_finance - stake tkUSDC at https://app.teko.finance/
 onchain_gm - mint GM at https://onchaingm.com/
 xl_meme - buy memetokens at https://testnet.xlmeme.com/megaeth
-
+omnihub - mint NFT at https://omnihub.xyz/collections?chain=megaeth-testnet&sort_by=trending
+mintair - deploy timer contract at https://contracts.mintair.xyz/
+easynode - deploy counter contract at https://playground.easy-node.xyz/
+hopnetwork - join waitlist at https://hopnetwork.xyz/
+owlto - deploy basic contract at https://owlto.finance/deploy/?chain=MegaTestnet
+rainmakr - buy meme token at https://rainmakr.xyz/en/rainai
+rarible - mint NFT at https://testnet.rarible.fun/collections/megaethtestnet/0xb8027dca96746f073896c45f65b720f9bd2afee7/drops
+superboard - complete quests at https://superboard.xyz/campaign/megaeth-testnet-real-time-era
+conft_app - mint NFT and domain at https://conft.app/quests/6342 | Every mint costs 0.0013 ETH
+zkcodex - deploys on https://zkcodex.com/onchain/deploy
+rarible_nacci - mint NFT at https://testnet.rarible.fun/collections/megaethtestnet/0xf1f50d5a9a629bf663d7c90a83070a36b367c3a1/drops
 """

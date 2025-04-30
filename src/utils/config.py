@@ -29,6 +29,8 @@ class FlowConfig:
 @dataclass
 class FaucetConfig:
     SOLVIUM_API_KEY: str
+    USE_CAPSOLVER: bool
+    CAPSOLVER_API_KEY: str
 
 
 @dataclass
@@ -47,11 +49,13 @@ class BebopConfig:
     BALANCE_PERCENTAGE_TO_SWAP: List[int]
     SWAP_ALL_TO_ETH: bool
 
+
 @dataclass
 class GteConfig:
     BALANCE_PERCENTAGE_TO_SWAP: List[int]
     SWAP_ALL_TO_ETH: bool
     SWAPS_AMOUNT: List[int]
+
 
 @dataclass
 class TekoFinanceConfig:
@@ -66,9 +70,34 @@ class XLMemeConfig:
 
 
 @dataclass
+class RainmakrConfig:
+    AMOUNT_OF_ETH_TO_BUY: List[float]
+    CONTRACTS_TO_BUY: List[str]
+
+
+@dataclass
+class ZkCodexConfig:
+    DEPLOY_TOKEN: bool
+    DEPLOY_NFT: bool
+    DEPLOY_CONTRACT: bool
+    ONE_ACTION_PER_LAUNCH: bool
+
+
+@dataclass
+class OmniHubConfig:
+    MAX_PRICE_TO_MINT: float
+
+
+@dataclass
 class SwapsConfig:
     BEBOP: BebopConfig
     GTE: GteConfig
+
+
+@dataclass
+class DeployConfig:
+    ZKCODEX: ZkCodexConfig
+
 
 @dataclass
 class StakingsConfig:
@@ -78,6 +107,8 @@ class StakingsConfig:
 @dataclass
 class MintsConfig:
     XL_MEME: XLMemeConfig
+    OMNIHUB: OmniHubConfig
+    RAINMAKR: RainmakrConfig
 
 
 @dataclass
@@ -94,6 +125,38 @@ class WalletsConfig:
 
 
 @dataclass
+class CrustySwapConfig:
+    NETWORKS_TO_REFUEL_FROM: List[str]
+    AMOUNT_TO_REFUEL: Tuple[float, float]
+    MINIMUM_BALANCE_TO_REFUEL: float
+    WAIT_FOR_FUNDS_TO_ARRIVE: bool
+    MAX_WAIT_TIME: int
+    BRIDGE_ALL: bool
+    BRIDGE_ALL_MAX_AMOUNT: float
+
+
+@dataclass
+class WithdrawalConfig:
+    currency: str
+    networks: List[str]
+    min_amount: float
+    max_amount: float
+    wait_for_funds: bool
+    max_wait_time: int
+    retries: int
+    max_balance: float  # Maximum wallet balance to allow withdrawal to
+
+
+@dataclass
+class ExchangesConfig:
+    name: str  # Exchange name (OKX, BINANCE, BYBIT)
+    apiKey: str
+    secretKey: str
+    passphrase: str  # Only needed for OKX
+    withdrawals: List[WithdrawalConfig]
+
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
     FLOW: FlowConfig
@@ -103,6 +166,9 @@ class Config:
     SWAPS: SwapsConfig
     STAKINGS: StakingsConfig
     MINTS: MintsConfig
+    DEPLOY: DeployConfig
+    EXCHANGES: ExchangesConfig
+    CRUSTY_SWAP: CrustySwapConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -157,6 +223,8 @@ class Config:
             ),
             FAUCET=FaucetConfig(
                 SOLVIUM_API_KEY=data["FAUCET"]["SOLVIUM_API_KEY"],
+                USE_CAPSOLVER=data["FAUCET"]["USE_CAPSOLVER"],
+                CAPSOLVER_API_KEY=data["FAUCET"]["CAPSOLVER_API_KEY"],
             ),
             RPCS=RpcsConfig(
                 MEGAETH=data["RPCS"]["MEGAETH"],
@@ -173,7 +241,9 @@ class Config:
                     SWAP_ALL_TO_ETH=data["SWAPS"]["BEBOP"]["SWAP_ALL_TO_ETH"],
                 ),
                 GTE=GteConfig(
-                    BALANCE_PERCENTAGE_TO_SWAP=data["SWAPS"]["GTE"]["BALANCE_PERCENTAGE_TO_SWAP"],
+                    BALANCE_PERCENTAGE_TO_SWAP=data["SWAPS"]["GTE"][
+                        "BALANCE_PERCENTAGE_TO_SWAP"
+                    ],
                     SWAP_ALL_TO_ETH=data["SWAPS"]["GTE"]["SWAP_ALL_TO_ETH"],
                     SWAPS_AMOUNT=data["SWAPS"]["GTE"]["SWAPS_AMOUNT"],
                 ),
@@ -195,8 +265,58 @@ class Config:
                     ],
                     CONTRACTS_TO_BUY=data["MINTS"]["XL_MEME"]["CONTRACTS_TO_BUY"],
                 ),
+                OMNIHUB=OmniHubConfig(
+                    MAX_PRICE_TO_MINT=data["MINTS"]["OMNIHUB"]["MAX_PRICE_TO_MINT"],
+                ),
+                RAINMAKR=RainmakrConfig(
+                    AMOUNT_OF_ETH_TO_BUY=data["MINTS"]["RAINMAKR"][
+                        "AMOUNT_OF_ETH_TO_BUY"
+                    ],
+                    CONTRACTS_TO_BUY=data["MINTS"]["RAINMAKR"]["CONTRACTS_TO_BUY"],
+                ),
+            ),
+            EXCHANGES=ExchangesConfig(
+                name=data["EXCHANGES"]["name"],
+                apiKey=data["EXCHANGES"]["apiKey"],
+                secretKey=data["EXCHANGES"]["secretKey"],
+                passphrase=data["EXCHANGES"]["passphrase"],
+                withdrawals=[
+                    WithdrawalConfig(
+                        currency=w["currency"],
+                        networks=w["networks"],
+                        min_amount=w["min_amount"],
+                        max_amount=w["max_amount"],
+                        wait_for_funds=w["wait_for_funds"],
+                        max_wait_time=w["max_wait_time"],
+                        retries=w["retries"],
+                        max_balance=w["max_balance"],
+                    )
+                    for w in data["EXCHANGES"]["withdrawals"]
+                ],
+            ),
+            CRUSTY_SWAP=CrustySwapConfig(
+                NETWORKS_TO_REFUEL_FROM=data["CRUSTY_SWAP"]["NETWORKS_TO_REFUEL_FROM"],
+                AMOUNT_TO_REFUEL=tuple(data["CRUSTY_SWAP"]["AMOUNT_TO_REFUEL"]),
+                MINIMUM_BALANCE_TO_REFUEL=data["CRUSTY_SWAP"][
+                    "MINIMUM_BALANCE_TO_REFUEL"
+                ],
+                WAIT_FOR_FUNDS_TO_ARRIVE=data["CRUSTY_SWAP"][
+                    "WAIT_FOR_FUNDS_TO_ARRIVE"
+                ],
+                MAX_WAIT_TIME=data["CRUSTY_SWAP"]["MAX_WAIT_TIME"],
+                BRIDGE_ALL=data["CRUSTY_SWAP"]["BRIDGE_ALL"],
+                BRIDGE_ALL_MAX_AMOUNT=data["CRUSTY_SWAP"]["BRIDGE_ALL_MAX_AMOUNT"],
+            ),
+            DEPLOY=DeployConfig(
+                ZKCODEX=ZkCodexConfig(
+                    DEPLOY_TOKEN=data["DEPLOY"]["ZKCODEX"]["DEPLOY_TOKEN"],
+                    DEPLOY_NFT=data["DEPLOY"]["ZKCODEX"]["DEPLOY_NFT"],
+                    DEPLOY_CONTRACT=data["DEPLOY"]["ZKCODEX"]["DEPLOY_CONTRACT"],
+                    ONE_ACTION_PER_LAUNCH=data["DEPLOY"]["ZKCODEX"]["ONE_ACTION_PER_LAUNCH"],
+                ),
             ),
         )
+
 
 # Singleton pattern
 def get_config() -> Config:

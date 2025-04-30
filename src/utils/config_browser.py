@@ -58,25 +58,32 @@ def load_config():
                 "SWAPS",
                 "STAKINGS",
                 "MINTS",
+                "DEPLOY",
+                "EXCHANGES",
+                "CRUSTY_SWAP",
             ]
             for section in required_sections:
                 if section not in config:
                     config[section] = {}
 
             # Ensure SETTINGS has all required fields with default values
-            settings_defaults = {
-                "THREADS": 1,
-                "ATTEMPTS": 5,
-                "ACCOUNTS_RANGE": [0, 0],
-                "EXACT_ACCOUNTS_TO_USE": [],
-                "SHUFFLE_WALLETS": True,
-                "PAUSE_BETWEEN_ATTEMPTS": [3, 10],
-                "PAUSE_BETWEEN_SWAPS": [5, 30],
-                "RANDOM_PAUSE_BETWEEN_ACCOUNTS": [5, 30],
-                "RANDOM_PAUSE_BETWEEN_ACTIONS": [5, 30],
-                "RANDOM_INITIALIZATION_PAUSE": [5, 60],
-                "WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS": 120
-            }
+            if "SETTINGS" in config:
+                defaults = {
+                    "THREADS": 1,
+                    "ATTEMPTS": 5,
+                    "ACCOUNTS_RANGE": [0, 0],
+                    "EXACT_ACCOUNTS_TO_USE": [],
+                    "SHUFFLE_WALLETS": True,
+                    "PAUSE_BETWEEN_ATTEMPTS": [3, 10],
+                    "PAUSE_BETWEEN_SWAPS": [3, 10],
+                    "RANDOM_PAUSE_BETWEEN_ACCOUNTS": [3, 10],
+                    "RANDOM_PAUSE_BETWEEN_ACTIONS": [3, 10],
+                    "RANDOM_INITIALIZATION_PAUSE": [5, 30],
+                    "SEND_TELEGRAM_LOGS": False,
+                    "TELEGRAM_BOT_TOKEN": "",
+                    "TELEGRAM_USERS_IDS": [],
+                    "WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS": 120,
+                }
 
             for key, default_value in settings_defaults.items():
                 if key not in config["SETTINGS"]:
@@ -94,6 +101,8 @@ def load_config():
             if "FAUCET" in config:
                 faucet_defaults = {
                     "SOLVIUM_API_KEY": "",
+                    "USE_CAPSOLVER": False,
+                    "CAPSOLVER_API_KEY": "",
                 }
 
                 for key, default_value in faucet_defaults.items():
@@ -112,7 +121,8 @@ def load_config():
             if "OTHERS" in config:
                 others_defaults = {
                     "SKIP_SSL_VERIFICATION": True,
-                    "USE_PROXY_FOR_RPC": False,
+                    "USE_PROXY_FOR_RPC": True,
+                    "ENABLE_BROWSER_DASHBOARD": True,
                 }
 
                 for key, default_value in others_defaults.items():
@@ -159,9 +169,9 @@ def load_config():
                 config["STAKINGS"]["TEKO_FINANCE"] = {}
 
             teko_finance_defaults = {
-                "CHANCE_FOR_MINT_TOKENS": 0,
+                "CHANCE_FOR_MINT_TOKENS": 50,
                 "BALANCE_PERCENTAGE_TO_STAKE": [5, 10],
-                "UNSTAKE": True,
+                "UNSTAKE": False,
             }
 
             for key, default_value in teko_finance_defaults.items():
@@ -177,13 +187,106 @@ def load_config():
                 config["MINTS"]["XL_MEME"] = {}
 
             xl_meme_defaults = {
-                "BALANCE_PERCENTAGE_TO_BUY": [10, 20],
+                "BALANCE_PERCENTAGE_TO_BUY": [2, 5],
                 "CONTRACTS_TO_BUY": [],
             }
 
             for key, default_value in xl_meme_defaults.items():
                 if key not in config["MINTS"]["XL_MEME"]:
                     config["MINTS"]["XL_MEME"][key] = default_value
+
+            # Ensure OMNIHUB section exists in MINTS
+            if "OMNIHUB" not in config["MINTS"]:
+                config["MINTS"]["OMNIHUB"] = {}
+
+            omnihub_defaults = {
+                "MAX_PRICE_TO_MINT": 0.00011,
+            }
+
+            for key, default_value in omnihub_defaults.items():
+                if key not in config["MINTS"]["OMNIHUB"]:
+                    config["MINTS"]["OMNIHUB"][key] = default_value
+
+            # Ensure RAINMAKR section exists in MINTS
+            if "RAINMAKR" not in config["MINTS"]:
+                config["MINTS"]["RAINMAKR"] = {}
+
+            rainmakr_defaults = {
+                "AMOUNT_OF_ETH_TO_BUY": [0.00013, 0.00015],
+                "CONTRACTS_TO_BUY": [],
+            }
+
+            for key, default_value in rainmakr_defaults.items():
+                if key not in config["MINTS"]["RAINMAKR"]:
+                    config["MINTS"]["RAINMAKR"][key] = default_value
+
+            # Ensure CRUSTY_SWAP has required fields
+            if "CRUSTY_SWAP" not in config:
+                config["CRUSTY_SWAP"] = {}
+
+            crusty_swap_defaults = {
+                "NETWORKS_TO_REFUEL_FROM": ["Arbitrum", "Optimism", "Base"],
+                "AMOUNT_TO_REFUEL": [0.0001, 0.00015],
+                "MINIMUM_BALANCE_TO_REFUEL": 99999,
+                "WAIT_FOR_FUNDS_TO_ARRIVE": True,
+                "MAX_WAIT_TIME": 999999,
+                "BRIDGE_ALL": False,
+                "BRIDGE_ALL_MAX_AMOUNT": 0.01,
+            }
+
+            for key, default_value in crusty_swap_defaults.items():
+                if key not in config["CRUSTY_SWAP"]:
+                    config["CRUSTY_SWAP"][key] = default_value
+
+            # Ensure DEPLOY has required fields
+            if "DEPLOY" not in config:
+                config["DEPLOY"] = {}
+
+            # Ensure ZKCODEX section exists in DEPLOY
+            if "ZKCODEX" not in config["DEPLOY"]:
+                config["DEPLOY"]["ZKCODEX"] = {}
+
+            zkcodex_defaults = {
+                "DEPLOY_TOKEN": True,
+                "DEPLOY_NFT": True,
+                "DEPLOY_CONTRACT": True,
+                "ONE_ACTION_PER_LAUNCH": False,
+            }
+
+            for key, default_value in zkcodex_defaults.items():
+                if key not in config["DEPLOY"]["ZKCODEX"]:
+                    config["DEPLOY"]["ZKCODEX"][key] = default_value
+
+            # Ensure EXCHANGES has required fields
+            if "EXCHANGES" not in config:
+                config["EXCHANGES"] = {}
+
+            exchanges_defaults = {
+                "name": "OKX",
+                "apiKey": "",
+                "secretKey": "",
+                "passphrase": "",
+                "withdrawals": [],
+            }
+
+            for key, default_value in exchanges_defaults.items():
+                if key not in config["EXCHANGES"]:
+                    config["EXCHANGES"][key] = default_value
+
+            # Ensure withdrawals array exists and has at least one item with defaults
+            if not config["EXCHANGES"]["withdrawals"]:
+                config["EXCHANGES"]["withdrawals"] = [
+                    {
+                        "currency": "ETH",
+                        "networks": ["Arbitrum", "Optimism"],
+                        "min_amount": 0.0003,
+                        "max_amount": 0.0004,
+                        "max_balance": 0.005,
+                        "wait_for_funds": True,
+                        "max_wait_time": 99999,
+                        "retries": 3,
+                    }
+                ]
 
             logger.info(f"Config loaded successfully")
             return config
@@ -196,12 +299,247 @@ def load_config():
 def save_config(config):
     """Сохранение конфигурации в YAML файл"""
     try:
+        # Проверяем наличие всех необходимых разделов
+        required_sections = [
+            "SETTINGS",
+            "FLOW",
+            "FAUCET",
+            "RPCS",
+            "OTHERS",
+            "SWAPS",
+            "STAKINGS",
+            "MINTS",
+            "DEPLOY",
+            "EXCHANGES",
+            "CRUSTY_SWAP",
+        ]
+        for section in required_sections:
+            if section not in config:
+                config[section] = {}
+
+        # Убедимся, что раздел SETTINGS содержит все необходимые поля
+        if "SETTINGS" in config:
+            settings_defaults = {
+                "THREADS": 1,
+                "ATTEMPTS": 5,
+                "ACCOUNTS_RANGE": [0, 0],
+                "EXACT_ACCOUNTS_TO_USE": [],
+                "SHUFFLE_WALLETS": True,
+                "PAUSE_BETWEEN_ATTEMPTS": [3, 10],
+                "PAUSE_BETWEEN_SWAPS": [3, 10],
+                "RANDOM_PAUSE_BETWEEN_ACCOUNTS": [3, 10],
+                "RANDOM_PAUSE_BETWEEN_ACTIONS": [3, 10],
+                "RANDOM_INITIALIZATION_PAUSE": [5, 30],
+                "SEND_TELEGRAM_LOGS": False,
+                "TELEGRAM_BOT_TOKEN": "",
+                "TELEGRAM_USERS_IDS": [],
+                "WAIT_FOR_TRANSACTION_CONFIRMATION_IN_SECONDS": 120,
+            }
+            for key, default_value in settings_defaults.items():
+                if key not in config["SETTINGS"]:
+                    config["SETTINGS"][key] = default_value
+
+        # Убедимся, что раздел FLOW содержит все необходимые поля
+        if "FLOW" in config:
+            flow_defaults = {"SKIP_FAILED_TASKS": False}
+            for key, default_value in flow_defaults.items():
+                if key not in config["FLOW"]:
+                    config["FLOW"][key] = default_value
+
+        # Убедимся, что раздел FAUCET содержит все необходимые поля
+        if "FAUCET" not in config:
+            config["FAUCET"] = {}
+
+        faucet_defaults = {
+            "SOLVIUM_API_KEY": "",
+            "USE_CAPSOLVER": False,
+            "CAPSOLVER_API_KEY": "",
+        }
+        for key, default_value in faucet_defaults.items():
+            if key not in config["FAUCET"]:
+                config["FAUCET"][key] = default_value
+
+        # Убедимся, что раздел RPCS содержит все необходимые поля
+        if "RPCS" not in config:
+            config["RPCS"] = {}
+
+        rpcs_defaults = {"MEGAETH": ["https://carrot.megaeth.com/rpc"]}
+        for key, default_value in rpcs_defaults.items():
+            if key not in config["RPCS"]:
+                config["RPCS"][key] = default_value
+
+        # Убедимся, что раздел OTHERS содержит все необходимые поля
+        if "OTHERS" not in config:
+            config["OTHERS"] = {}
+
+        others_defaults = {
+            "SKIP_SSL_VERIFICATION": True,
+            "USE_PROXY_FOR_RPC": True,
+            "ENABLE_BROWSER_DASHBOARD": True,
+        }
+        for key, default_value in others_defaults.items():
+            if key not in config["OTHERS"]:
+                config["OTHERS"][key] = default_value
+
+        # Убедимся, что раздел SWAPS содержит все необходимые поля
+        if "SWAPS" not in config:
+            config["SWAPS"] = {}
+
+        # Убедимся, что раздел BEBOP содержит все необходимые поля
+        if "BEBOP" not in config["SWAPS"]:
+            config["SWAPS"]["BEBOP"] = {}
+
+        bebop_defaults = {
+            "BALANCE_PERCENTAGE_TO_SWAP": [5, 10],
+            "SWAP_ALL_TO_ETH": False,
+        }
+        for key, default_value in bebop_defaults.items():
+            if key not in config["SWAPS"]["BEBOP"]:
+                config["SWAPS"]["BEBOP"][key] = default_value
+
+        # Убедимся, что раздел GTE содержит все необходимые поля
+        if "GTE" not in config["SWAPS"]:
+            config["SWAPS"]["GTE"] = {}
+
+        gte_defaults = {
+            "BALANCE_PERCENTAGE_TO_SWAP": [5, 10],
+            "SWAP_ALL_TO_ETH": True,
+            "SWAPS_AMOUNT": [3, 5],
+        }
+        for key, default_value in gte_defaults.items():
+            if key not in config["SWAPS"]["GTE"]:
+                config["SWAPS"]["GTE"][key] = default_value
+
+        # Убедимся, что раздел STAKINGS содержит все необходимые поля
+        if "STAKINGS" not in config:
+            config["STAKINGS"] = {}
+
+        # Убедимся, что раздел TEKO_FINANCE содержит все необходимые поля
+        if "TEKO_FINANCE" not in config["STAKINGS"]:
+            config["STAKINGS"]["TEKO_FINANCE"] = {}
+
+        teko_finance_defaults = {
+            "CHANCE_FOR_MINT_TOKENS": 50,
+            "BALANCE_PERCENTAGE_TO_STAKE": [5, 10],
+            "UNSTAKE": False,
+        }
+        for key, default_value in teko_finance_defaults.items():
+            if key not in config["STAKINGS"]["TEKO_FINANCE"]:
+                config["STAKINGS"]["TEKO_FINANCE"][key] = default_value
+
+        # Убедимся, что раздел MINTS содержит все необходимые поля
+        if "MINTS" not in config:
+            config["MINTS"] = {}
+
+        # Убедимся, что раздел XL_MEME содержит все необходимые поля
+        if "XL_MEME" not in config["MINTS"]:
+            config["MINTS"]["XL_MEME"] = {}
+
+        xl_meme_defaults = {
+            "BALANCE_PERCENTAGE_TO_BUY": [2, 5],
+            "CONTRACTS_TO_BUY": [],
+        }
+        for key, default_value in xl_meme_defaults.items():
+            if key not in config["MINTS"]["XL_MEME"]:
+                config["MINTS"]["XL_MEME"][key] = default_value
+
+        # Убедимся, что раздел OMNIHUB содержит все необходимые поля
+        if "OMNIHUB" not in config["MINTS"]:
+            config["MINTS"]["OMNIHUB"] = {}
+
+        omnihub_defaults = {
+            "MAX_PRICE_TO_MINT": 0.00011,
+        }
+        for key, default_value in omnihub_defaults.items():
+            if key not in config["MINTS"]["OMNIHUB"]:
+                config["MINTS"]["OMNIHUB"][key] = default_value
+
+        # Убедимся, что раздел RAINMAKR содержит все необходимые поля
+        if "RAINMAKR" not in config["MINTS"]:
+            config["MINTS"]["RAINMAKR"] = {}
+
+        rainmakr_defaults = {
+            "AMOUNT_OF_ETH_TO_BUY": [0.00013, 0.00015],
+            "CONTRACTS_TO_BUY": [],
+        }
+        for key, default_value in rainmakr_defaults.items():
+            if key not in config["MINTS"]["RAINMAKR"]:
+                config["MINTS"]["RAINMAKR"][key] = default_value
+
+        # Убедимся, что раздел CRUSTY_SWAP содержит все необходимые поля
+        if "CRUSTY_SWAP" not in config:
+            config["CRUSTY_SWAP"] = {}
+
+        crusty_swap_defaults = {
+            "NETWORKS_TO_REFUEL_FROM": ["Arbitrum", "Optimism", "Base"],
+            "AMOUNT_TO_REFUEL": [0.0001, 0.00015],
+            "MINIMUM_BALANCE_TO_REFUEL": 99999,
+            "WAIT_FOR_FUNDS_TO_ARRIVE": True,
+            "MAX_WAIT_TIME": 999999,
+            "BRIDGE_ALL": False,
+            "BRIDGE_ALL_MAX_AMOUNT": 0.01,
+        }
+        for key, default_value in crusty_swap_defaults.items():
+            if key not in config["CRUSTY_SWAP"]:
+                config["CRUSTY_SWAP"][key] = default_value
+
+        # Убедимся, что раздел DEPLOY содержит все необходимые поля
+        if "DEPLOY" not in config:
+            config["DEPLOY"] = {}
+
+        # Убедимся, что раздел ZKCODEX содержит все необходимые поля
+        if "ZKCODEX" not in config["DEPLOY"]:
+            config["DEPLOY"]["ZKCODEX"] = {}
+
+        zkcodex_defaults = {
+            "DEPLOY_TOKEN": True,
+            "DEPLOY_NFT": True,
+            "DEPLOY_CONTRACT": True,
+            "ONE_ACTION_PER_LAUNCH": False,
+        }
+        for key, default_value in zkcodex_defaults.items():
+            if key not in config["DEPLOY"]["ZKCODEX"]:
+                config["DEPLOY"]["ZKCODEX"][key] = default_value
+
+        # Убедимся, что раздел EXCHANGES содержит все необходимые поля
+        if "EXCHANGES" not in config:
+            config["EXCHANGES"] = {}
+
+        exchanges_defaults = {
+            "name": "OKX",
+            "apiKey": "",
+            "secretKey": "",
+            "passphrase": "",
+            "withdrawals": [],
+        }
+        for key, default_value in exchanges_defaults.items():
+            if key not in config["EXCHANGES"]:
+                config["EXCHANGES"][key] = default_value
+
+        # Убедимся, что массив withdrawals существует и содержит хотя бы один элемент с дефолтными значениями
+        if not config["EXCHANGES"]["withdrawals"]:
+            config["EXCHANGES"]["withdrawals"] = [
+                {
+                    "currency": "ETH",
+                    "networks": ["Arbitrum", "Optimism"],
+                    "min_amount": 0.0003,
+                    "max_amount": 0.0004,
+                    "max_balance": 0.005,
+                    "wait_for_funds": True,
+                    "max_wait_time": 99999,
+                    "retries": 3,
+                }
+            ]
+
         with open(CONFIG_PATH, "w") as file:
             yaml.dump(config, file, default_flow_style=False, sort_keys=False)
+
+        logger.info(f"Configuration saved to {CONFIG_PATH}")
+        return True
     except Exception as e:
-        logger.error(f"Error saving config: {str(e)}")
+        logger.error(f"Error saving configuration: {str(e)}")
         logger.error(traceback.format_exc())
-        raise
+        return False
 
 
 @app.route("/")
@@ -335,6 +673,14 @@ def create_required_directories():
                     <div class="sidebar-item" data-section="mints">
                         <i class="fas fa-hammer"></i>
                         <span>Mints</span>
+                    </div>
+                    <div class="sidebar-item" data-section="crustyswap">
+                        <i class="fas fa-network-wired"></i>
+                        <span>Crusty Swap</span>
+                    </div>
+                    <div class="sidebar-item" data-section="exchanges">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Exchanges</span>
                     </div>
                 </div>
             </div>
@@ -1281,12 +1627,44 @@ function collectFormData() {
         const path = element.dataset.configPath.split('.');
         let current = config;
         
-        // Создаем вложенные объекты по пути
-        for (let i = 0; i < path.length - 1; i++) {
-            if (!current[path[i]]) {
-                current[path[i]] = {};
+        // Check if this is a withdrawal field (has pattern like EXCHANGES.withdrawals[0].field)
+        const isWithdrawalField = path.length >= 2 && path[1].includes('withdrawals[');
+        
+        // For regular fields
+        if (!isWithdrawalField) {
+            // Создаем вложенные объекты по пути
+            for (let i = 0; i < path.length - 1; i++) {
+                if (!current[path[i]]) {
+                    current[path[i]] = {};
+                }
+                current = current[path[i]];
             }
-            current = current[path[i]];
+        } 
+        // For withdrawal fields
+        else {
+            // Ensure EXCHANGES exists
+            if (!current['EXCHANGES']) {
+                current['EXCHANGES'] = {};
+            }
+            
+            // Ensure withdrawals array exists
+            if (!current['EXCHANGES']['withdrawals']) {
+                current['EXCHANGES']['withdrawals'] = [{}];
+            }
+            
+            // Extract the index from the pattern withdrawals[X]
+            const withdrawalIndexMatch = path[1].match(/withdrawals\[(\d+)\]/);
+            const withdrawalIndex = withdrawalIndexMatch ? parseInt(withdrawalIndexMatch[1]) : 0;
+            
+            // Ensure the particular withdrawal object exists
+            if (!current['EXCHANGES']['withdrawals'][withdrawalIndex]) {
+                current['EXCHANGES']['withdrawals'][withdrawalIndex] = {};
+            }
+            
+            current = current['EXCHANGES']['withdrawals'][withdrawalIndex];
+            // Last part of the path for withdrawals is the actual field
+            path[1] = path[path.length - 1]; 
+            path.length = 2;
         }
         
         const lastKey = path[path.length - 1];
@@ -1304,12 +1682,26 @@ function collectFormData() {
                 current[rangeKey] = [0, 0];
             }
             current[rangeKey][0] = parseInt(element.value, 10);
+
+            // Check if this is a float type field
+            if (element.dataset.type === 'float') {
+                current[rangeKey][0] = parseFloat(element.value);
+            } else {
+                current[rangeKey][0] = parseInt(element.value, 10);
+            }
         } else if (element.classList.contains('range-max')) {
             const rangeKey = lastKey.replace('_MAX', '');
             if (!current[rangeKey]) {
                 current[rangeKey] = [0, 0];
             }
             current[rangeKey][1] = parseInt(element.value, 10);
+
+            // Check if this is a float type field
+            if (element.dataset.type === 'float') {
+                current[rangeKey][1] = parseFloat(element.value);
+            } else {
+                current[rangeKey][1] = parseInt(element.value, 10);
+            }
         } else if (element.classList.contains('list-input')) {
             // Для списков (разделенных запятыми)
             const items = element.value.split(',')
@@ -1351,7 +1743,9 @@ function renderConfig(config) {
         'others': { key: 'OTHERS', title: 'Others', icon: 'ellipsis-h' },
         'swaps': { key: 'SWAPS', title: 'Swaps', icon: 'sync-alt' },
         'stakings': { key: 'STAKINGS', title: 'Stakings', icon: 'coins' },
-        'mints': { key: 'MINTS', title: 'Mints', icon: 'hammer' }
+        'mints': { key: 'MINTS', title: 'Mints', icon: 'hammer' },
+        'crustyswap': { key: 'CRUSTY_SWAP', title: 'Crusty Swap', icon: 'network-wired' },
+        'exchanges': { key: 'EXCHANGES', title: 'Exchanges', icon: 'exchange-alt' }
     };
     
     // Создаем все секции
@@ -1402,6 +1796,8 @@ function renderConfig(config) {
                 // Карточка для настроек Faucet
                 createCard(cardsContainer, 'Captcha Solvers', 'puzzle-piece', [
                     { key: 'SOLVIUM_API_KEY', value: config[key]['SOLVIUM_API_KEY'] },
+                    { key: 'USE_CAPSOLVER', value: config[key]['USE_CAPSOLVER'] },
+                    { key: 'CAPSOLVER_API_KEY', value: config[key]['CAPSOLVER_API_KEY'] }
                 ], key);
             } else if (key === 'RPCS') {
                 // Специальная обработка для RPCs
@@ -1472,6 +1868,698 @@ function renderConfig(config) {
                         })), 
                         `${key}.XL_MEME`
                     );
+                }
+
+                // OMNIHUB
+                if (config[key]['OMNIHUB']) {
+                    createCard(cardsContainer, 'OmniHub Settings', 'cube', 
+                        Object.entries(config[key]['OMNIHUB']).map(([k, v]) => ({ 
+                            key: k, 
+                            value: v, 
+                            isNumber: typeof v === 'number' && !Array.isArray(v)
+                        })), 
+                        `${key}.OMNIHUB`
+                    );
+                }
+            } else if (key === 'CRUSTY_SWAP') {
+                // CRUSTY_SWAP with more horizontal layout
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'config-card';
+                
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'card-title';
+                
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-network-wired';
+                titleDiv.appendChild(icon);
+                
+                const titleText = document.createElement('span');
+                titleText.textContent = 'Crusty Swap Settings';
+                titleDiv.appendChild(titleText);
+                
+                cardDiv.appendChild(titleDiv);
+                
+                // Networks to refuel from
+                const networksFieldDiv = document.createElement('div');
+                networksFieldDiv.className = 'config-field';
+                
+                const networksLabel = document.createElement('label');
+                networksLabel.className = 'field-label';
+                networksLabel.textContent = 'Networks to refuel from';
+                networksFieldDiv.appendChild(networksLabel);
+                
+                const networksContainer = document.createElement('div');
+                networksContainer.className = 'tags-input';
+                networksContainer.dataset.configPath = `${key}.NETWORKS_TO_REFUEL_FROM`;
+                
+                // Predefined network options
+                const availableNetworks = ['Arbitrum', 'Optimism', 'Base'];
+                
+                // Add existing networks as tags
+                if (config[key].NETWORKS_TO_REFUEL_FROM && Array.isArray(config[key].NETWORKS_TO_REFUEL_FROM)) {
+                    config[key].NETWORKS_TO_REFUEL_FROM.forEach(network => {
+                        if (availableNetworks.includes(network)) {
+                            const tag = document.createElement('div');
+                            tag.className = 'tag';
+                            
+                            const tagText = document.createElement('span');
+                            tagText.className = 'tag-text';
+                            tagText.textContent = network;
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'tag-remove';
+                            removeBtn.innerHTML = '&times;';
+                            removeBtn.addEventListener('click', function() {
+                                tag.remove();
+                            });
+                            
+                            tag.appendChild(tagText);
+                            tag.appendChild(removeBtn);
+                            networksContainer.appendChild(tag);
+                        }
+                    });
+                }
+                
+                // Add dropdown for new networks
+                const networksSelect = document.createElement('select');
+                networksSelect.className = 'networks-select';
+                networksSelect.style.background = 'transparent';
+                networksSelect.style.border = 'none';
+                networksSelect.style.color = 'var(--text-primary)';
+                networksSelect.style.padding = '5px';
+                
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Add network...';
+                defaultOption.selected = true;
+                defaultOption.disabled = true;
+                networksSelect.appendChild(defaultOption);
+                
+                availableNetworks.forEach(network => {
+                    const option = document.createElement('option');
+                    option.value = network;
+                    option.textContent = network;
+                    option.style.color = '#000';
+                    option.style.background = '#fff';
+                    networksSelect.appendChild(option);
+                });
+                
+                networksSelect.addEventListener('change', function() {
+                    if (this.value) {
+                        // Check if network already exists
+                        const tags = networksContainer.querySelectorAll('.tag-text');
+                        let exists = false;
+                        tags.forEach(tag => {
+                            if (tag.textContent === this.value) {
+                                exists = true;
+                            }
+                        });
+                        
+                        if (!exists) {
+                            const tag = document.createElement('div');
+                            tag.className = 'tag';
+                            
+                            const tagText = document.createElement('span');
+                            tagText.className = 'tag-text';
+                            tagText.textContent = this.value;
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'tag-remove';
+                            removeBtn.innerHTML = '&times;';
+                            removeBtn.addEventListener('click', function() {
+                                tag.remove();
+                            });
+                            
+                            tag.appendChild(tagText);
+                            tag.appendChild(removeBtn);
+                            networksContainer.insertBefore(tag, this);
+                        }
+                        
+                        // Reset select
+                        this.value = '';
+                    }
+                });
+                
+                networksContainer.appendChild(networksSelect);
+                networksFieldDiv.appendChild(networksContainer);
+                cardDiv.appendChild(networksFieldDiv);
+                
+                // Amount to refuel - side by side min and max
+                const amountFieldsDiv = document.createElement('div');
+                amountFieldsDiv.className = 'config-field horizontal-fields';
+                amountFieldsDiv.style.display = 'flex';
+                amountFieldsDiv.style.gap = '15px';
+                
+                // Min amount field
+                const minAmountDiv = document.createElement('div');
+                minAmountDiv.style.flex = '1';
+                
+                const minAmountLabel = document.createElement('label');
+                minAmountLabel.className = 'field-label';
+                minAmountLabel.textContent = 'Amount (min)';
+                minAmountDiv.appendChild(minAmountLabel);
+                
+                const minAmountInput = document.createElement('input');
+                minAmountInput.type = 'number';
+                minAmountInput.step = '0.0001';
+                minAmountInput.className = 'field-input range-min';
+                minAmountInput.value = config[key].AMOUNT_TO_REFUEL[0] || 0.0001;
+                minAmountInput.dataset.configPath = `${key}.AMOUNT_TO_REFUEL_MIN`;
+                minAmountInput.dataset.type = 'float';
+                
+                minAmountDiv.appendChild(minAmountInput);
+                amountFieldsDiv.appendChild(minAmountDiv);
+                
+                // Max amount field
+                const maxAmountDiv = document.createElement('div');
+                maxAmountDiv.style.flex = '1';
+                
+                const maxAmountLabel = document.createElement('label');
+                maxAmountLabel.className = 'field-label';
+                maxAmountLabel.textContent = 'Amount (max)';
+                maxAmountDiv.appendChild(maxAmountLabel);
+                
+                const maxAmountInput = document.createElement('input');
+                maxAmountInput.type = 'number';
+                maxAmountInput.step = '0.0001';
+                maxAmountInput.className = 'field-input range-max';
+                maxAmountInput.value = config[key].AMOUNT_TO_REFUEL[1] || 0.00015;
+                maxAmountInput.dataset.configPath = `${key}.AMOUNT_TO_REFUEL_MAX`;
+                maxAmountInput.dataset.type = 'float';
+                
+                maxAmountDiv.appendChild(maxAmountInput);
+                amountFieldsDiv.appendChild(maxAmountDiv);
+                
+                cardDiv.appendChild(amountFieldsDiv);
+                
+                // 2-column layout for remaining options
+                const optionsContainer = document.createElement('div');
+                optionsContainer.style.display = 'flex';
+                optionsContainer.style.flexWrap = 'wrap';
+                optionsContainer.style.gap = '15px';
+                
+                // Minimum balance to refuel
+                const minBalanceDiv = document.createElement('div');
+                minBalanceDiv.className = 'config-field';
+                minBalanceDiv.style.flex = '1';
+                minBalanceDiv.style.minWidth = '200px';
+                
+                const minBalanceLabel = document.createElement('label');
+                minBalanceLabel.className = 'field-label';
+                minBalanceLabel.textContent = 'Minimum balance to refuel';
+                minBalanceDiv.appendChild(minBalanceLabel);
+                
+                const minBalanceInput = document.createElement('input');
+                minBalanceInput.type = 'number';
+                minBalanceInput.step = '0.0001';
+                minBalanceInput.className = 'field-input';
+                minBalanceInput.value = config[key].MINIMUM_BALANCE_TO_REFUEL || 0;
+                minBalanceInput.dataset.configPath = `${key}.MINIMUM_BALANCE_TO_REFUEL`;
+                minBalanceInput.dataset.type = 'float';
+                
+                minBalanceDiv.appendChild(minBalanceInput);
+                optionsContainer.appendChild(minBalanceDiv);
+                
+                // Bridge all max amount
+                const bridgeMaxAmountDiv = document.createElement('div');
+                bridgeMaxAmountDiv.className = 'config-field';
+                bridgeMaxAmountDiv.style.flex = '1';
+                bridgeMaxAmountDiv.style.minWidth = '200px';
+                
+                const bridgeMaxAmountLabel = document.createElement('label');
+                bridgeMaxAmountLabel.className = 'field-label';
+                bridgeMaxAmountLabel.textContent = 'Bridge all max amount';
+                bridgeMaxAmountDiv.appendChild(bridgeMaxAmountLabel);
+                
+                const bridgeMaxAmountInput = document.createElement('input');
+                bridgeMaxAmountInput.type = 'number';
+                bridgeMaxAmountInput.step = '0.0001';
+                bridgeMaxAmountInput.className = 'field-input';
+                bridgeMaxAmountInput.value = config[key].BRIDGE_ALL_MAX_AMOUNT || 0.01;
+                bridgeMaxAmountInput.dataset.configPath = `${key}.BRIDGE_ALL_MAX_AMOUNT`;
+                bridgeMaxAmountInput.dataset.type = 'float';
+                
+                bridgeMaxAmountDiv.appendChild(bridgeMaxAmountInput);
+                optionsContainer.appendChild(bridgeMaxAmountDiv);
+                
+                // Max wait time
+                const maxWaitTimeDiv = document.createElement('div');
+                maxWaitTimeDiv.className = 'config-field';
+                maxWaitTimeDiv.style.flex = '1';
+                maxWaitTimeDiv.style.minWidth = '200px';
+                
+                const maxWaitTimeLabel = document.createElement('label');
+                maxWaitTimeLabel.className = 'field-label';
+                maxWaitTimeLabel.textContent = 'Max wait time';
+                maxWaitTimeDiv.appendChild(maxWaitTimeLabel);
+                
+                const maxWaitTimeInput = document.createElement('input');
+                maxWaitTimeInput.type = 'number';
+                maxWaitTimeInput.className = 'field-input';
+                maxWaitTimeInput.value = config[key].MAX_WAIT_TIME || 99999;
+                maxWaitTimeInput.dataset.configPath = `${key}.MAX_WAIT_TIME`;
+                maxWaitTimeInput.dataset.type = 'number';
+                
+                maxWaitTimeDiv.appendChild(maxWaitTimeInput);
+                optionsContainer.appendChild(maxWaitTimeDiv);
+                
+                // Create checkboxes in 2-column layout
+                const checkboxesContainer = document.createElement('div');
+                checkboxesContainer.style.display = 'flex';
+                checkboxesContainer.style.gap = '20px';
+                checkboxesContainer.style.marginTop = '10px';
+                
+                // Wait for funds checkbox
+                const waitFundsDiv = document.createElement('div');
+                waitFundsDiv.className = 'checkbox-field';
+                waitFundsDiv.style.flex = '1';
+                
+                const waitFundsInput = document.createElement('input');
+                waitFundsInput.type = 'checkbox';
+                waitFundsInput.className = 'checkbox-input';
+                waitFundsInput.checked = config[key].WAIT_FOR_FUNDS_TO_ARRIVE || false;
+                waitFundsInput.dataset.configPath = `${key}.WAIT_FOR_FUNDS_TO_ARRIVE`;
+                waitFundsInput.id = `checkbox-wait-funds-crusty`;
+                
+                const waitFundsLabel = document.createElement('label');
+                waitFundsLabel.className = 'checkbox-label';
+                waitFundsLabel.textContent = 'Wait for funds to arrive';
+                waitFundsLabel.htmlFor = waitFundsInput.id;
+                
+                waitFundsDiv.appendChild(waitFundsInput);
+                waitFundsDiv.appendChild(waitFundsLabel);
+                checkboxesContainer.appendChild(waitFundsDiv);
+                
+                // Bridge all checkbox
+                const bridgeAllDiv = document.createElement('div');
+                bridgeAllDiv.className = 'checkbox-field';
+                bridgeAllDiv.style.flex = '1';
+                
+                const bridgeAllInput = document.createElement('input');
+                bridgeAllInput.type = 'checkbox';
+                bridgeAllInput.className = 'checkbox-input';
+                bridgeAllInput.checked = config[key].BRIDGE_ALL || false;
+                bridgeAllInput.dataset.configPath = `${key}.BRIDGE_ALL`;
+                bridgeAllInput.id = `checkbox-bridge-all`;
+                
+                const bridgeAllLabel = document.createElement('label');
+                bridgeAllLabel.className = 'checkbox-label';
+                bridgeAllLabel.textContent = 'Bridge all';
+                bridgeAllLabel.htmlFor = bridgeAllInput.id;
+                
+                bridgeAllDiv.appendChild(bridgeAllInput);
+                bridgeAllDiv.appendChild(bridgeAllLabel);
+                checkboxesContainer.appendChild(bridgeAllDiv);
+                
+                optionsContainer.appendChild(checkboxesContainer);
+                cardDiv.appendChild(optionsContainer);
+                
+                cardsContainer.appendChild(cardDiv);
+            } else if (key === 'EXCHANGES') {
+                // Basic exchange settings (exclude withdrawals)
+                const exchangeCardDiv = document.createElement('div');
+                exchangeCardDiv.className = 'config-card';
+                
+                const exchangeTitleDiv = document.createElement('div');
+                exchangeTitleDiv.className = 'card-title';
+                
+                const exchangeIcon = document.createElement('i');
+                exchangeIcon.className = 'fas fa-exchange-alt';
+                exchangeTitleDiv.appendChild(exchangeIcon);
+                
+                const exchangeTitleText = document.createElement('span');
+                exchangeTitleText.textContent = 'Exchange Settings';
+                exchangeTitleDiv.appendChild(exchangeTitleText);
+                
+                exchangeCardDiv.appendChild(exchangeTitleDiv);
+                
+                // Exchange name - dropdown instead of text input
+                const nameFieldDiv = document.createElement('div');
+                nameFieldDiv.className = 'config-field';
+                
+                const nameLabel = document.createElement('label');
+                nameLabel.className = 'field-label';
+                nameLabel.textContent = 'Name';
+                nameFieldDiv.appendChild(nameLabel);
+                
+                const nameSelect = document.createElement('select');
+                nameSelect.className = 'field-input';
+                nameSelect.dataset.configPath = `${key}.name`;
+                
+                const options = ['OKX', 'BITGET'];
+                options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    option.textContent = opt;
+                    if (config[key].name === opt) {
+                        option.selected = true;
+                    }
+                    nameSelect.appendChild(option);
+                });
+                
+                nameFieldDiv.appendChild(nameSelect);
+                exchangeCardDiv.appendChild(nameFieldDiv);
+                
+                // API Key field
+                const apiKeyFieldDiv = document.createElement('div');
+                apiKeyFieldDiv.className = 'config-field';
+                
+                const apiKeyLabel = document.createElement('label');
+                apiKeyLabel.className = 'field-label';
+                apiKeyLabel.textContent = 'API Key';
+                apiKeyFieldDiv.appendChild(apiKeyLabel);
+                
+                const apiKeyInput = document.createElement('input');
+                apiKeyInput.type = 'text';
+                apiKeyInput.className = 'field-input';
+                apiKeyInput.value = config[key].apiKey || '';
+                apiKeyInput.dataset.configPath = `${key}.apiKey`;
+                
+                apiKeyFieldDiv.appendChild(apiKeyInput);
+                exchangeCardDiv.appendChild(apiKeyFieldDiv);
+                
+                // Secret Key field
+                const secretKeyFieldDiv = document.createElement('div');
+                secretKeyFieldDiv.className = 'config-field';
+                
+                const secretKeyLabel = document.createElement('label');
+                secretKeyLabel.className = 'field-label';
+                secretKeyLabel.textContent = 'Secret Key';
+                secretKeyFieldDiv.appendChild(secretKeyLabel);
+                
+                const secretKeyInput = document.createElement('input');
+                secretKeyInput.type = 'text';
+                secretKeyInput.className = 'field-input';
+                secretKeyInput.value = config[key].secretKey || '';
+                secretKeyInput.dataset.configPath = `${key}.secretKey`;
+                
+                secretKeyFieldDiv.appendChild(secretKeyInput);
+                exchangeCardDiv.appendChild(secretKeyFieldDiv);
+                
+                // Passphrase field
+                const passphraseFieldDiv = document.createElement('div');
+                passphraseFieldDiv.className = 'config-field';
+                
+                const passphraseLabel = document.createElement('label');
+                passphraseLabel.className = 'field-label';
+                passphraseLabel.textContent = 'Passphrase';
+                passphraseFieldDiv.appendChild(passphraseLabel);
+                
+                const passphraseInput = document.createElement('input');
+                passphraseInput.type = 'text';
+                passphraseInput.className = 'field-input';
+                passphraseInput.value = config[key].passphrase || '';
+                passphraseInput.dataset.configPath = `${key}.passphrase`;
+                
+                passphraseFieldDiv.appendChild(passphraseInput);
+                exchangeCardDiv.appendChild(passphraseFieldDiv);
+                
+                cardsContainer.appendChild(exchangeCardDiv);
+                
+                // Create withdrawal settings card with more horizontal layout
+                if (config[key].withdrawals && config[key].withdrawals.length > 0) {
+                    const withdrawalConfig = config[key].withdrawals[0];
+                    
+                    const withdrawalCardDiv = document.createElement('div');
+                    withdrawalCardDiv.className = 'config-card';
+                    
+                    const withdrawalTitleDiv = document.createElement('div');
+                    withdrawalTitleDiv.className = 'card-title';
+                    
+                    const withdrawalIcon = document.createElement('i');
+                    withdrawalIcon.className = 'fas fa-money-bill-transfer';
+                    withdrawalTitleDiv.appendChild(withdrawalIcon);
+                    
+                    const withdrawalTitleText = document.createElement('span');
+                    withdrawalTitleText.textContent = 'Withdrawal Settings';
+                    withdrawalTitleDiv.appendChild(withdrawalTitleText);
+                    
+                    withdrawalCardDiv.appendChild(withdrawalTitleDiv);
+                    
+                    // Currency field - hardcoded to ETH
+                    const currencyFieldDiv = document.createElement('div');
+                    currencyFieldDiv.className = 'config-field';
+                    
+                    const currencyLabel = document.createElement('label');
+                    currencyLabel.className = 'field-label';
+                    currencyLabel.textContent = 'Currency';
+                    currencyFieldDiv.appendChild(currencyLabel);
+                    
+                    const currencyInput = document.createElement('input');
+                    currencyInput.type = 'text';
+                    currencyInput.className = 'field-input';
+                    currencyInput.value = 'ETH';
+                    currencyInput.readOnly = true;
+                    currencyInput.disabled = true;
+                    currencyInput.dataset.configPath = `${key}.withdrawals[0].currency`;
+                    
+                    currencyFieldDiv.appendChild(currencyInput);
+                    withdrawalCardDiv.appendChild(currencyFieldDiv);
+                    
+                    // Networks field - multi-select with predefined options
+                    const networksFieldDiv = document.createElement('div');
+                    networksFieldDiv.className = 'config-field';
+                    
+                    const networksLabel = document.createElement('label');
+                    networksLabel.className = 'field-label';
+                    networksLabel.textContent = 'Networks';
+                    networksFieldDiv.appendChild(networksLabel);
+                    
+                    const networksContainer = document.createElement('div');
+                    networksContainer.className = 'tags-input';
+                    networksContainer.dataset.configPath = `${key}.withdrawals[0].networks`;
+                    
+                    // Predefined network options
+                    const availableNetworks = ['Arbitrum', 'Optimism', 'Base'];
+                    
+                    // Add existing networks as tags
+                    if (withdrawalConfig.networks && Array.isArray(withdrawalConfig.networks)) {
+                        withdrawalConfig.networks.forEach(network => {
+                            if (availableNetworks.includes(network)) {
+                                const tag = document.createElement('div');
+                                tag.className = 'tag';
+                                
+                                const tagText = document.createElement('span');
+                                tagText.className = 'tag-text';
+                                tagText.textContent = network;
+                                
+                                const removeBtn = document.createElement('button');
+                                removeBtn.className = 'tag-remove';
+                                removeBtn.innerHTML = '&times;';
+                                removeBtn.addEventListener('click', function() {
+                                    tag.remove();
+                                });
+                                
+                                tag.appendChild(tagText);
+                                tag.appendChild(removeBtn);
+                                networksContainer.appendChild(tag);
+                            }
+                        });
+                    }
+                    
+                    // Add dropdown for new networks
+                    const networksSelect = document.createElement('select');
+                    networksSelect.className = 'networks-select';
+                    networksSelect.style.background = 'transparent';
+                    networksSelect.style.border = 'none';
+                    networksSelect.style.color = 'var(--text-primary)';
+                    networksSelect.style.padding = '5px';
+                    
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Add network...';
+                    defaultOption.selected = true;
+                    defaultOption.disabled = true;
+                    networksSelect.appendChild(defaultOption);
+                    
+                    availableNetworks.forEach(network => {
+                        const option = document.createElement('option');
+                        option.value = network;
+                        option.textContent = network;
+                        option.style.color = '#000';
+                        option.style.background = '#fff';
+                        networksSelect.appendChild(option);
+                    });
+                    
+                    networksSelect.addEventListener('change', function() {
+                        if (this.value) {
+                            // Check if network already exists
+                            const tags = networksContainer.querySelectorAll('.tag-text');
+                            let exists = false;
+                            tags.forEach(tag => {
+                                if (tag.textContent === this.value) {
+                                    exists = true;
+                                }
+                            });
+                            
+                            if (!exists) {
+                                const tag = document.createElement('div');
+                                tag.className = 'tag';
+                                
+                                const tagText = document.createElement('span');
+                                tagText.className = 'tag-text';
+                                tagText.textContent = this.value;
+                                
+                                const removeBtn = document.createElement('button');
+                                removeBtn.className = 'tag-remove';
+                                removeBtn.innerHTML = '&times;';
+                                removeBtn.addEventListener('click', function() {
+                                    tag.remove();
+                                });
+                                
+                                tag.appendChild(tagText);
+                                tag.appendChild(removeBtn);
+                                networksContainer.insertBefore(tag, this);
+                            }
+                            
+                            // Reset select
+                            this.value = '';
+                        }
+                    });
+                    
+                    networksContainer.appendChild(networksSelect);
+                    networksFieldDiv.appendChild(networksContainer);
+                    withdrawalCardDiv.appendChild(networksFieldDiv);
+                    
+                    // Min and Max amount fields side by side
+                    const amountFieldsDiv = document.createElement('div');
+                    amountFieldsDiv.className = 'config-field horizontal-fields';
+                    amountFieldsDiv.style.display = 'flex';
+                    amountFieldsDiv.style.gap = '15px';
+                    
+                    // Min amount field
+                    const minAmountDiv = document.createElement('div');
+                    minAmountDiv.style.flex = '1';
+                    
+                    const minAmountLabel = document.createElement('label');
+                    minAmountLabel.className = 'field-label';
+                    minAmountLabel.textContent = 'Min amount';
+                    minAmountDiv.appendChild(minAmountLabel);
+                    
+                    const minAmountInput = document.createElement('input');
+                    minAmountInput.type = 'number';
+                    minAmountInput.step = '0.0001';
+                    minAmountInput.className = 'field-input';
+                    minAmountInput.value = withdrawalConfig.min_amount || 0.0003;
+                    minAmountInput.dataset.configPath = `${key}.withdrawals[0].min_amount`;
+                    minAmountInput.dataset.type = 'float';
+                    
+                    minAmountDiv.appendChild(minAmountInput);
+                    amountFieldsDiv.appendChild(minAmountDiv);
+                    
+                    // Max amount field
+                    const maxAmountDiv = document.createElement('div');
+                    maxAmountDiv.style.flex = '1';
+                    
+                    const maxAmountLabel = document.createElement('label');
+                    maxAmountLabel.className = 'field-label';
+                    maxAmountLabel.textContent = 'Max amount';
+                    maxAmountDiv.appendChild(maxAmountLabel);
+                    
+                    const maxAmountInput = document.createElement('input');
+                    maxAmountInput.type = 'number';
+                    maxAmountInput.step = '0.0001';
+                    maxAmountInput.className = 'field-input';
+                    maxAmountInput.value = withdrawalConfig.max_amount || 0.0004;
+                    maxAmountInput.dataset.configPath = `${key}.withdrawals[0].max_amount`;
+                    maxAmountInput.dataset.type = 'float';
+                    
+                    maxAmountDiv.appendChild(maxAmountInput);
+                    amountFieldsDiv.appendChild(maxAmountDiv);
+                    
+                    withdrawalCardDiv.appendChild(amountFieldsDiv);
+                    
+                    // Max balance field
+                    const maxBalanceFieldDiv = document.createElement('div');
+                    maxBalanceFieldDiv.className = 'config-field';
+                    
+                    const maxBalanceLabel = document.createElement('label');
+                    maxBalanceLabel.className = 'field-label';
+                    maxBalanceLabel.textContent = 'Max balance';
+                    maxBalanceFieldDiv.appendChild(maxBalanceLabel);
+                    
+                    const maxBalanceInput = document.createElement('input');
+                    maxBalanceInput.type = 'number';
+                    maxBalanceInput.step = '0.0001';
+                    maxBalanceInput.className = 'field-input';
+                    maxBalanceInput.value = withdrawalConfig.max_balance || 0.005;
+                    maxBalanceInput.dataset.configPath = `${key}.withdrawals[0].max_balance`;
+                    maxBalanceInput.dataset.type = 'float';
+                    
+                    maxBalanceFieldDiv.appendChild(maxBalanceInput);
+                    withdrawalCardDiv.appendChild(maxBalanceFieldDiv);
+                    
+                    // Horizontal layout for checkboxes and related fields
+                    const optionsFieldsDiv = document.createElement('div');
+                    optionsFieldsDiv.className = 'config-field';
+                    optionsFieldsDiv.style.display = 'flex';
+                    optionsFieldsDiv.style.flexWrap = 'wrap';
+                    optionsFieldsDiv.style.gap = '20px';
+                    
+                    // Wait for funds checkbox
+                    const waitFundsDiv = document.createElement('div');
+                    waitFundsDiv.className = 'checkbox-field';
+                    waitFundsDiv.style.flex = '1';
+                    
+                    const waitFundsInput = document.createElement('input');
+                    waitFundsInput.type = 'checkbox';
+                    waitFundsInput.className = 'checkbox-input';
+                    waitFundsInput.checked = withdrawalConfig.wait_for_funds || false;
+                    waitFundsInput.dataset.configPath = `${key}.withdrawals[0].wait_for_funds`;
+                    waitFundsInput.id = `checkbox-wait-funds`;
+                    
+                    const waitFundsLabel = document.createElement('label');
+                    waitFundsLabel.className = 'checkbox-label';
+                    waitFundsLabel.textContent = 'Wait for funds';
+                    waitFundsLabel.htmlFor = waitFundsInput.id;
+                    
+                    waitFundsDiv.appendChild(waitFundsInput);
+                    waitFundsDiv.appendChild(waitFundsLabel);
+                    optionsFieldsDiv.appendChild(waitFundsDiv);
+                    
+                    // Max wait time field
+                    const maxWaitTimeDiv = document.createElement('div');
+                    maxWaitTimeDiv.style.flex = '1';
+                    maxWaitTimeDiv.style.minWidth = '200px';
+                    
+                    const maxWaitTimeLabel = document.createElement('label');
+                    maxWaitTimeLabel.className = 'field-label';
+                    maxWaitTimeLabel.textContent = 'Max wait time';
+                    maxWaitTimeDiv.appendChild(maxWaitTimeLabel);
+                    
+                    const maxWaitTimeInput = document.createElement('input');
+                    maxWaitTimeInput.type = 'number';
+                    maxWaitTimeInput.className = 'field-input';
+                    maxWaitTimeInput.value = withdrawalConfig.max_wait_time || 99999;
+                    maxWaitTimeInput.dataset.configPath = `${key}.withdrawals[0].max_wait_time`;
+                    maxWaitTimeInput.dataset.type = 'number';
+                    
+                    maxWaitTimeDiv.appendChild(maxWaitTimeInput);
+                    optionsFieldsDiv.appendChild(maxWaitTimeDiv);
+                    
+                    // Retries field
+                    const retriesDiv = document.createElement('div');
+                    retriesDiv.style.flex = '1';
+                    retriesDiv.style.minWidth = '200px';
+                    
+                    const retriesLabel = document.createElement('label');
+                    retriesLabel.className = 'field-label';
+                    retriesLabel.textContent = 'Retries';
+                    retriesDiv.appendChild(retriesLabel);
+                    
+                    const retriesInput = document.createElement('input');
+                    retriesInput.type = 'number';
+                    retriesInput.className = 'field-input small-input';
+                    retriesInput.value = withdrawalConfig.retries || 3;
+                    retriesInput.dataset.configPath = `${key}.withdrawals[0].retries`;
+                    retriesInput.dataset.type = 'number';
+                    
+                    retriesDiv.appendChild(retriesInput);
+                    optionsFieldsDiv.appendChild(retriesDiv);
+                    
+                    withdrawalCardDiv.appendChild(optionsFieldsDiv);
+                    
+                    cardsContainer.appendChild(withdrawalCardDiv);
                 }
             }
         }
@@ -1551,6 +2639,34 @@ function createRangeField(container, key, value, path) {
     label.textContent = formatFieldName(key);
     fieldDiv.appendChild(label);
     
+    // Check if this is a float value field (used in EXCHANGES and CRUSTY_SWAP)
+    const isFloatField = path.includes('min_amount') || 
+                          path.includes('max_amount') || 
+                          path.includes('max_balance') || 
+                          path.includes('AMOUNT_TO_REFUEL') ||
+                          path.includes('MINIMUM_BALANCE_TO_REFUEL') ||
+                          path.includes('BRIDGE_ALL_MAX_AMOUNT');
+    
+    // For single values that need to be treated as ranges (withdrawal settings)
+    if (!Array.isArray(value)) {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'field-input small-input';
+        input.value = value;
+        input.dataset.configPath = path;
+        
+        if (isFloatField) {
+            input.step = '0.0001';
+            input.dataset.type = 'float';
+        } else {
+            input.dataset.type = 'number';
+        }
+        
+        fieldDiv.appendChild(input);
+        container.appendChild(fieldDiv);
+        return;
+    }
+    
     const rangeDiv = document.createElement('div');
     rangeDiv.className = 'range-input';
     
@@ -1559,7 +2675,13 @@ function createRangeField(container, key, value, path) {
     minInput.className = 'field-input range-min small-input';
     minInput.value = value[0];
     minInput.dataset.configPath = `${path}_MIN`;
-    minInput.dataset.type = 'number';
+    
+    if (isFloatField) {
+        minInput.step = '0.0001';
+        minInput.dataset.type = 'float';
+    } else {
+        minInput.dataset.type = 'number';
+    }
     
     const separator = document.createElement('span');
     separator.className = 'range-separator';
@@ -1570,7 +2692,13 @@ function createRangeField(container, key, value, path) {
     maxInput.className = 'field-input range-max small-input';
     maxInput.value = value[1];
     maxInput.dataset.configPath = `${path}_MAX`;
-    maxInput.dataset.type = 'number';
+    
+    if (isFloatField) {
+        maxInput.step = '0.0001';
+        maxInput.dataset.type = 'float';
+    } else {
+        maxInput.dataset.type = 'number';
+    }
     
     rangeDiv.appendChild(minInput);
     rangeDiv.appendChild(separator);

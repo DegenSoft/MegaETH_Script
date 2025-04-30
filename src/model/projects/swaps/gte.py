@@ -134,14 +134,9 @@ class GteSwaps:
             
             # Prepare users list (single user in this case)
             users = [self.wallet.address]
-            
-            # Make the multicall
-            READ_CALL_GAS_LIMIT = 30000000  # Higher gas limit for simulation
             all_balances = await multicall_contract.functions.balances(
                 users, token_addresses
-            ).call({
-                'gas': READ_CALL_GAS_LIMIT
-            })
+            ).call()
             
             # ETH balance is the first one
             eth_balance = all_balances[0]

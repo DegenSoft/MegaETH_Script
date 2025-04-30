@@ -9,5 +9,8 @@ app.log
 /data/profiles
 src/version.txt
 data/proxies.txt
+/src/utils/dashboard
+/src/utils/config_interface
+
 *.db
 .DS_Store

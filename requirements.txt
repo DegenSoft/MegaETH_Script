@@ -3,6 +3,7 @@ aiohttp==3.11.14
 curl_cffi==0.10.0
 eth_account==0.13.5
 Flask==3.1.0
+ccxt==4.3.48
 loguru==0.7.2
 pandas==2.2.3
 primp==0.14.0
@@ -18,3 +19,5 @@ urllib3==2.3.0
 web3==7.8.0
 aiosqlite==0.21.0
 crypto==1.4.1
+aiosqlite
+openpyxl
