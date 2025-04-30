@@ -10,3 +10,4 @@ app.log
 src/version.txt
 data/proxies.txt
 *.db
+.DS_Store
