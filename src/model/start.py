@@ -31,7 +31,6 @@ from src.model.onchain.web3_custom import Web3Custom
 from src.utils.client import create_client
 from src.utils.config import Config
 from src.model.database.db_manager import Database
-from src.utils.telegram_logger import send_telegram_message
 from src.utils.reader import read_private_keys
 
 
